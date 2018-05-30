@@ -17,11 +17,14 @@ bool Ball::collision( sf::Vector2f arg )
 
 void Ball::move( float dt )
 {
+     float loss = 0.8;
      if( position.x > 1200-radius )
      {
           if( wallbounce[0] )
           {
                velocity.x *= -1;
+               velocity.x *= loss;
+               velocity.y *= loss;
                wallbounce[0] = false;
           }
      }
@@ -32,6 +35,8 @@ void Ball::move( float dt )
           if( wallbounce[2] )
           {
                velocity.x *= -1;
+               velocity.x *= loss;
+               velocity.y *= loss;
                wallbounce[2] = false;
           }
      }
@@ -42,6 +47,8 @@ void Ball::move( float dt )
           if( wallbounce[4] )
           {
                velocity.y *= -1;
+               velocity.x *= loss;
+               velocity.y *= loss;
                wallbounce[4] = false;
           }
      }
@@ -52,6 +59,8 @@ void Ball::move( float dt )
           if( wallbounce[1] )
           {
                velocity.y *= -1;
+               velocity.x *= loss;
+               velocity.y *= loss;
                wallbounce[1] = false;
           }
      }
