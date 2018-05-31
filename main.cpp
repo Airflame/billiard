@@ -63,8 +63,12 @@ int main()
           sf::Vector2f canevec = mpos-cpos;
           float caneangle = atan2(canevec.y,canevec.x) / M_PI * 180;
           float canelen = sqrt(sfm::len2(canevec));
-          if( canelen > 100 )
-               canelen = 100;
+          if( canelen > 200 )
+          {
+               canevec.x = 200 * canevec.x/canelen;
+               canevec.y = 200 * canevec.y/canelen;
+               canelen = 200;
+          }
           cane.setSize(sf::Vector2f(canelen,6));
           cane.setOrigin(sf::Vector2f(0,3));
           cane.setPosition(cpos);
