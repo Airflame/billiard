@@ -1,13 +1,40 @@
 #include <vector>
 #include <iostream>
 #include "include/Ball.h"
+#include <SFML/Network.hpp>
+#include <SFML/System.hpp>
+#include <string>
 
+sf::Vector2f rv;
+bool turn = false;
+bool received = false;
+sf::TcpSocket socket;
+
+void netthread()
+{
+     while(1)
+     {
+          float x, y;
+          sf::Packet packet;
+          socket.receive(packet);
+          packet >> x >> y;
+          rv = sf::Vector2f(x,y);
+          turn = true;
+          received = true;
+     }
+}
 
 int main()
 {
      srand( time(NULL) );
      sf::Clock cl;
      float dt = 0;
+
+     std::cout << "Waiting for connection" << std::endl;
+     sf::TcpListener listener;
+     listener.listen(7777);
+     listener.accept(socket);
+     std::cout << "Connection established" << std::endl;
 
      std::vector< Ball > balls;
      std::vector< std::vector<bool> > validcollisions( 16, std::vector<bool>(1000, true) );
@@ -42,7 +69,9 @@ int main()
      bool drawcane = false;
      bool moveable = true;
 
-     sf::RenderWindow window( sf::VideoMode( 1200, 600 ), "Billiard" );
+     sf::RenderWindow window( sf::VideoMode( 1200, 600 ), "Billiard - Server" );
+     sf::Thread thread(&netthread);
+     thread.launch();
 
      while( window.isOpen() )
      {
@@ -101,14 +130,22 @@ int main()
                          validcollisions[j][i] = true;
                     }
                }
+               sf::Packet packet;
+               float x = balls[i].position.x;
+               float y = balls[i].position.y;
+               packet << x << y << i;
+               socket.send(packet);
           }
 
           sf::Event event;
           while (window.pollEvent(event))
           {
                if (event.type == sf::Event::Closed)
+               {
                     window.close();
-               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 10 and moveable )
+                    thread.terminate();
+               }
+               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 10 and moveable and turn )
                {
                     drawcane = true;
                }
@@ -117,10 +154,21 @@ int main()
                     sf::Vector2f releasevel = sf::Vector2f(-5*canevec.x,-5*canevec.y);
                     balls[0].velocity = releasevel;
                     drawcane = false;
+                    turn = false;
                }
           }
+
+          if( received )
+          {
+               balls[0].velocity = rv;
+               received = false;
+          }
+
           window.display();
+          float olddt = dt;
           dt = cl.restart().asSeconds();
+          if( dt > 0.02 )
+               dt = olddt;
      }
 
      return 0;
