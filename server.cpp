@@ -19,7 +19,12 @@ void netthread()
           socket.receive(packet);
           packet >> x >> y;
           rv = sf::Vector2f(x,y);
+
           turn = true;
+          sf::Packet tpacket;
+          int id = 1;
+          tpacket << id << !turn;
+          socket.send(tpacket);
           received = true;
      }
 }
@@ -133,7 +138,8 @@ int main()
                sf::Packet packet;
                float x = balls[i].position.x;
                float y = balls[i].position.y;
-               packet << x << y << i;
+               int id = 0;
+               packet << id << x << y << i;
                socket.send(packet);
           }
 
@@ -151,10 +157,14 @@ int main()
                }
                if( event.type == sf::Event::MouseButtonReleased and drawcane )
                {
-                    sf::Vector2f releasevel = sf::Vector2f(-5*canevec.x,-5*canevec.y);
-                    balls[0].velocity = releasevel;
+                    balls[0].velocity = sf::Vector2f(-5*canevec.x,-5*canevec.y);
                     drawcane = false;
+
                     turn = false;
+                    sf::Packet tpacket;
+                    int id = 1;
+                    tpacket << id << !turn;
+                    socket.send(tpacket);
                }
           }
 
@@ -165,10 +175,7 @@ int main()
           }
 
           window.display();
-          float olddt = dt;
           dt = cl.restart().asSeconds();
-          if( dt > 0.02 )
-               dt = olddt;
      }
 
      return 0;

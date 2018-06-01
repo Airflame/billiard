@@ -13,12 +13,24 @@ void netthread()
 {
      while(1)
      {
-          float x, y;
+          int id;
           sf::Packet packet;
           socket.receive(packet);
-          int n;
-          packet >> x >> y >> n;
-          rp[n] = sf::Vector2f(x,y);
+          packet >> id;
+
+          switch(id)
+          {
+               case 0:
+               float x, y;
+               int n;
+               packet >> x >> y >> n;
+               rp[n] = sf::Vector2f(x,y);
+               break;
+
+               case 1:
+               packet >> turn;
+               break;
+          }
      }
 }
 
@@ -67,6 +79,7 @@ int main()
 
      bool drawcane = false;
      bool moveable = true;
+     bool changeturn = false;
 
      sf::RenderWindow window( sf::VideoMode( 1200, 600 ), "Billiard - Client" );
      sf::Thread thread(&netthread);
@@ -77,12 +90,9 @@ int main()
           window.clear( sf::Color::Black );
           sf::Vector2f releasevel;
 
-          moveable = true;
           for( Ball b : balls )
           {
                window.draw(b.entity);
-               if( sfm::len2(b.velocity) != 0 )
-                    moveable = false;
           }
           if( drawcane )
                window.draw(cane);
@@ -103,8 +113,12 @@ int main()
           cane.setPosition(cpos);
           cane.setRotation(caneangle);
 
+          moveable = true;
           for( int i = 0; i < balls.size(); i++ )
           {
+               sf::Vector2f oldpos = balls[i].position;
+               if( oldpos != rp[i] )
+                    moveable = false;
                balls[i].entity.setPosition(rp[i]);
                balls[i].position = rp[i];
           }
@@ -117,7 +131,7 @@ int main()
                     window.close();
                     thread.terminate();
                }
-               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 10 /*and moveable and turn*/ )
+               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 10 and moveable and turn )
                {
                     drawcane = true;
                }
@@ -125,7 +139,6 @@ int main()
                {
                     sf::Vector2f releasevel = sf::Vector2f(-5*canevec.x,-5*canevec.y);
                     drawcane = false;
-                    //turn = false;
 
                     sf::Packet packet;
                     float x = releasevel.x;
@@ -136,10 +149,7 @@ int main()
           }
 
           window.display();
-          float olddt = dt;
           dt = cl.restart().asSeconds();
-          if( dt > 0.02 )
-               dt = olddt;
      }
 
      return 0;
