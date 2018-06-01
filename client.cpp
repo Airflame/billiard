@@ -56,22 +56,25 @@ int main()
      }
      balls[0].position = sf::Vector2f(300,300);
      balls[1].position = sf::Vector2f(854,300);
-     balls[2].position = sf::Vector2f(873,289);
-     balls[3].position = sf::Vector2f(873,311);
-     balls[4].position = sf::Vector2f(892,279);
-     balls[5].position = sf::Vector2f(892,300);
-     balls[6].position = sf::Vector2f(892,321);
-     balls[7].position = sf::Vector2f(911,266);
-     balls[8].position = sf::Vector2f(911,288);
-     balls[9].position = sf::Vector2f(911,312);
-     balls[10].position = sf::Vector2f(911,334);
-     balls[11].position = sf::Vector2f(930,256);
-     balls[12].position = sf::Vector2f(930,278);
-     balls[13].position = sf::Vector2f(930,300);
-     balls[14].position = sf::Vector2f(930,322);
-     balls[15].position = sf::Vector2f(930,344);
-     for( int i = 1; i < 16; i++ )
+     balls[14].position = sf::Vector2f(873,289);
+     balls[2].position = sf::Vector2f(873,311);
+     balls[3].position = sf::Vector2f(892,279);
+     balls[8].position = sf::Vector2f(892,300);
+     balls[12].position = sf::Vector2f(892,321);
+     balls[4].position = sf::Vector2f(911,266);
+     balls[10].position = sf::Vector2f(911,288);
+     balls[7].position = sf::Vector2f(911,312);
+     balls[15].position = sf::Vector2f(911,334);
+     balls[13].position = sf::Vector2f(930,256);
+     balls[9].position = sf::Vector2f(930,278);
+     balls[5].position = sf::Vector2f(930,300);
+     balls[11].position = sf::Vector2f(930,322);
+     balls[6].position = sf::Vector2f(930,344);
+     for( int i = 1; i <= 7; i++ )
           balls[i].entity.setFillColor(sf::Color::Blue);
+     for( int i = 9; i <= 15; i++ )
+          balls[i].entity.setFillColor(sf::Color::Red);
+     balls[8].entity.setFillColor(sf::Color::Black);
 
      sf::RectangleShape cane;
      cane.setFillColor(sf::Color(100,100,100));
@@ -87,8 +90,7 @@ int main()
 
      while( window.isOpen() )
      {
-          window.clear( sf::Color::Black );
-          sf::Vector2f releasevel;
+          window.clear( sf::Color(10,108,3) );
 
           for( Ball b : balls )
           {
