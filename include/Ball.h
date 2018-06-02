@@ -11,6 +11,7 @@ public:
      bool collision( sf::Vector2f );
      void move( float dt );
      void accelerate( float dt, float value );
+     void hide();
 
      int radius = 15;
      bool wallbounce[4];

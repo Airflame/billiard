@@ -36,7 +36,7 @@ void netthread()
 
 int main()
 {
-     srand( time(NULL) );
+     srand(time(NULL));
      sf::Clock cl;
      float dt = 0;
 
@@ -80,19 +80,32 @@ int main()
      cane.setFillColor(sf::Color(100,100,100));
      cane.setSize(sf::Vector2f(100,5));
 
+     sf::CircleShape holes[6];
+     for( int i = 0; i < 6; i++ )
+     {
+          holes[i].setRadius(16);
+          holes[i].setFillColor(sf::Color(40,40,40));
+          holes[i].setOrigin(16,16);
+          holes[i].setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
+     }
+
      bool drawcane = false;
      bool moveable = true;
      bool changeturn = false;
 
-     sf::RenderWindow window( sf::VideoMode( 1200, 600 ), "Billiard - Client" );
+     sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Client" );
      sf::Thread thread(&netthread);
      thread.launch();
 
      while( window.isOpen() )
      {
-          window.clear( sf::Color(10,108,3) );
+          window.clear(sf::Color(10,108,3));
 
-          for( Ball b : balls )
+          for( auto h : holes )
+          {
+               window.draw(h);
+          }
+          for( auto b : balls )
           {
                window.draw(b.entity);
           }
@@ -128,7 +141,7 @@ int main()
           sf::Event event;
           while (window.pollEvent(event))
           {
-               if (event.type == sf::Event::Closed)
+               if( event.type == sf::Event::Closed )
                {
                     window.close();
                     thread.terminate();

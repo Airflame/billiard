@@ -106,3 +106,10 @@ void Ball::accelerate( float dt, float value )
                velocity.y -= value*y*dt;
      }
 }
+
+void Ball::hide()
+{
+     position = sf::Vector2f(-100,100);
+     velocity = sf::Vector2f(0,0);
+     entity.setPosition(position);
+}

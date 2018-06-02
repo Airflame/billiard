@@ -31,7 +31,7 @@ void netthread()
 
 int main()
 {
-     srand( time(NULL) );
+     srand(time(NULL));
      sf::Clock cl;
      float dt = 0;
 
@@ -41,14 +41,13 @@ int main()
      listener.accept(socket);
      std::cout << "Connection established" << std::endl;
 
-     std::vector< Ball > balls;
-     std::vector< std::vector<bool> > validcollisions( 16, std::vector<bool>(1000, true) );
+     std::vector<Ball> balls;
+     std::vector<std::vector<bool>> validcollisions(16,std::vector<bool>(1000, true));
      for( int i = 0; i < 16; i++ )
      {
           Ball temp;
           balls.push_back(temp);
      }
-     int r = balls[0].radius;
      balls[0].position = sf::Vector2f(300,300);
      balls[1].position = sf::Vector2f(830,300);
      balls[14].position = sf::Vector2f(857,283);
@@ -75,19 +74,32 @@ int main()
      cane.setFillColor(sf::Color(100,100,100));
      cane.setSize(sf::Vector2f(100,5));
 
+     sf::CircleShape holes[6];
+     for( int i = 0; i < 6; i++ )
+     {
+          holes[i].setRadius(16);
+          holes[i].setFillColor(sf::Color(40,40,40));
+          holes[i].setOrigin(16,16);
+          holes[i].setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
+     }
+
      bool drawcane = false;
      bool moveable = true;
 
-     sf::RenderWindow window( sf::VideoMode( 1200, 600 ), "Billiard - Server" );
+     sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Server" );
      sf::Thread thread(&netthread);
      thread.launch();
 
      while( window.isOpen() )
      {
-          window.clear( sf::Color(10,108,3) );
+          window.clear(sf::Color(10,108,3));
 
           moveable = true;
-          for( Ball b : balls )
+          for( auto h : holes )
+          {
+               window.draw(h);
+          }
+          for( auto b : balls )
           {
                window.draw(b.entity);
                if( sfm::len2(b.velocity) != 0 )
@@ -145,12 +157,19 @@ int main()
                int id = 0;
                packet << id << x << y << i;
                socket.send(packet);
+
+               for( int j = 0; j < 6; j++ )
+               {
+                    if( sfm::len2( balls[i].position-holes[j].getPosition() ) < 300 )
+                         balls[i].hide();
+               }
           }
 
+
           sf::Event event;
-          while (window.pollEvent(event))
+          while( window.pollEvent(event) )
           {
-               if (event.type == sf::Event::Closed)
+               if( event.type == sf::Event::Closed )
                {
                     window.close();
                     thread.terminate();
