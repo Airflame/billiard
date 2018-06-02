@@ -5,7 +5,7 @@
 #include <string>
 
 sf::Vector2f rp[16];
-bool turn = true;
+bool turn = false;
 bool received = false;
 sf::TcpSocket socket;
 
@@ -91,9 +91,9 @@ int main()
 
      bool drawcane = false;
      bool moveable = true;
-     bool changeturn = false;
 
      sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Client" );
+     window.setFramerateLimit(60);
      sf::Thread thread(&netthread);
      thread.launch();
 
@@ -131,9 +131,12 @@ int main()
           moveable = true;
           for( int i = 0; i < balls.size(); i++ )
           {
-               sf::Vector2f oldpos = balls[i].position;
-               if( oldpos != rp[i] )
-                    moveable = false;
+               if( balls[i].position.x > 0 and balls[i].position.y > 0 )
+               {
+                    sf::Vector2f oldpos = balls[i].position;
+                    if( oldpos != rp[i] )
+                         moveable = false;
+               }
                balls[i].entity.setPosition(rp[i]);
                balls[i].position = rp[i];
           }
@@ -146,7 +149,7 @@ int main()
                     window.close();
                     thread.terminate();
                }
-               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 10 and moveable and turn )
+               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 15 and moveable and turn )
                {
                     drawcane = true;
                }

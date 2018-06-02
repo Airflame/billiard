@@ -6,7 +6,7 @@
 #include <string>
 
 sf::Vector2f rv;
-bool turn = false;
+bool turn = true;
 bool received = false;
 sf::TcpSocket socket;
 
@@ -19,12 +19,6 @@ void netthread()
           socket.receive(packet);
           packet >> x >> y;
           rv = sf::Vector2f(x,y);
-
-          turn = true;
-          sf::Packet tpacket;
-          int id = 1;
-          tpacket << id << !turn;
-          socket.send(tpacket);
           received = true;
      }
 }
@@ -85,8 +79,15 @@ int main()
 
      bool drawcane = false;
      bool moveable = true;
+     bool scored = false;
+     bool changeable = false;
+     bool pickedcolor = false;
+     bool isblue;
+
+     int points[2] = {0,0};
 
      sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Server" );
+     window.setFramerateLimit(60);
      sf::Thread thread(&netthread);
      thread.launch();
 
@@ -94,7 +95,6 @@ int main()
      {
           window.clear(sf::Color(10,108,3));
 
-          moveable = true;
           for( auto h : holes )
           {
                window.draw(h);
@@ -102,8 +102,6 @@ int main()
           for( auto b : balls )
           {
                window.draw(b.entity);
-               if( sfm::len2(b.velocity) != 0 )
-                    moveable = false;
           }
           if( drawcane )
                window.draw(cane);
@@ -126,7 +124,8 @@ int main()
 
           for( int i = 0; i < balls.size(); i++ )
           {
-               balls[i].move(dt);
+               if( balls[i].position.x > 0 and balls[i].position.y > 0 )
+                    balls[i].move(dt);
                for( int j = 0; j < balls.size(); j++ )
                {
                     if( j == i )
@@ -160,11 +159,56 @@ int main()
 
                for( int j = 0; j < 6; j++ )
                {
-                    if( sfm::len2( balls[i].position-holes[j].getPosition() ) < 300 )
+                    if( sfm::len2(balls[i].position-holes[j].getPosition()) < 1200 and i > 0 )
+                    {
                          balls[i].hide();
+                         if( !pickedcolor )
+                         {
+                              pickedcolor = true;
+                              if( i >= 1 and i <= 7 )
+                                   isblue = turn ? true : false;
+                              if( i >= 9 and i <= 16 )
+                                   isblue = turn ? false : true;
+                         }
+                         if( i >= 1 and i <= 7 )
+                         {
+                              if( (turn and isblue) or (!turn and !isblue) )
+                                   scored = true;
+                              if( isblue )
+                                   points[0]++;
+                              else
+                                   points[1]++;
+                         }
+                         if( i >= 9 and i <= 16 )
+                         {
+                              if( (!turn and isblue) or (turn and !isblue) )
+                                   scored = true;
+                              if( isblue )
+                                   points[1]++;
+                              else
+                                   points[0]++;
+                         }
+                         std::cout << points[0] << " : " << points[1] << std::endl;
+                    }
                }
           }
 
+          moveable = true;
+          for( auto b : balls )
+          {
+               if( sfm::len2(b.velocity) != 0 and b.position.x > 0 and b.position.y > 0 )
+                    moveable = false;
+          }
+
+          if( moveable and !scored and changeable )
+          {
+               turn = !turn;
+               changeable = false;
+               sf::Packet tpacket;
+               int id = 1;
+               tpacket << id << !turn;
+               socket.send(tpacket);
+          }
 
           sf::Event event;
           while( window.pollEvent(event) )
@@ -174,7 +218,7 @@ int main()
                     window.close();
                     thread.terminate();
                }
-               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 10 and moveable and turn )
+               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 15 and moveable and turn )
                {
                     drawcane = true;
                }
@@ -182,12 +226,8 @@ int main()
                {
                     balls[0].velocity = sf::Vector2f(-5*canevec.x,-5*canevec.y);
                     drawcane = false;
-
-                    turn = false;
-                    sf::Packet tpacket;
-                    int id = 1;
-                    tpacket << id << !turn;
-                    socket.send(tpacket);
+                    scored = false;
+                    changeable = true;
                }
           }
 
@@ -195,6 +235,8 @@ int main()
           {
                balls[0].velocity = rv;
                received = false;
+               scored = false;
+               changeable = true;
           }
 
           window.display();
