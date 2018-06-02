@@ -5,6 +5,8 @@
 #include <string>
 
 sf::Vector2f rp[16];
+bool playable = true;
+bool lost;
 bool turn = false;
 bool received = false;
 sf::TcpSocket socket;
@@ -29,6 +31,11 @@ void netthread()
 
                case 1:
                packet >> turn;
+               break;
+
+               case 2:
+               packet >> lost;
+               playable = false;
                break;
           }
      }
@@ -165,6 +172,9 @@ int main()
                     socket.send(packet);
                }
           }
+
+          if( !playable )
+               std::cout << (lost ? "SERVER WON" : "CLIENT WON") << std::endl;
 
           window.display();
           dt = cl.restart().asSeconds();

@@ -6,7 +6,8 @@
 #include <string>
 
 sf::Vector2f rv;
-bool turn = true;
+bool playable = true;
+bool lost;
 bool received = false;
 sf::TcpSocket socket;
 
@@ -78,12 +79,14 @@ int main()
      }
 
      bool drawcane = false;
+     bool turn = true;
      bool moveable = true;
      bool scored = false;
      bool changeable = false;
      bool pickedcolor = false;
      bool isblue;
 
+     int bhole[2];
      int points[2] = {0,0};
 
      sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Server" );
@@ -166,29 +169,40 @@ int main()
                          {
                               pickedcolor = true;
                               if( i >= 1 and i <= 7 )
-                                   isblue = turn ? true : false;
+                                   isblue = turn;
                               if( i >= 9 and i <= 16 )
-                                   isblue = turn ? false : true;
+                                   isblue = !turn;
                          }
                          if( i >= 1 and i <= 7 )
                          {
                               if( (turn and isblue) or (!turn and !isblue) )
                                    scored = true;
-                              if( isblue )
-                                   points[0]++;
-                              else
-                                   points[1]++;
+                              points[ !isblue ]++;
+                              if( points[ !isblue ] == 7 )
+                                   bhole[ !isblue ] = (j + 3) % 6;
                          }
                          if( i >= 9 and i <= 16 )
                          {
                               if( (!turn and isblue) or (turn and !isblue) )
                                    scored = true;
-                              if( isblue )
-                                   points[1]++;
-                              else
-                                   points[0]++;
+                              points[ isblue ]++;
+                              if( points[ isblue ] == 7 )
+                                   bhole[ isblue ] = (j + 3) % 6;
                          }
-                         std::cout << points[0] << " : " << points[1] << std::endl;
+                         if( i == 8 )
+                         {
+                              playable = false;
+                              if( points[ !turn ] == 7 and j == bhole[ !turn ] )
+                              {
+                                   lost = !turn;
+                              }
+                              else
+                                   lost = turn;
+                              sf::Packet wpacket;
+                              int id = 2;
+                              wpacket << id << !lost;
+                              socket.send(wpacket);
+                         }
                     }
                }
           }
@@ -238,6 +252,9 @@ int main()
                scored = false;
                changeable = true;
           }
+
+          if( !playable )
+               std::cout << (lost ? "CLIENT WON" : "SERVER WON") << std::endl;
 
           window.display();
           dt = cl.restart().asSeconds();
