@@ -12,7 +12,7 @@ public:
      void move( float dt );
      void accelerate( float dt, float value );
 
-     int radius = 10;
+     int radius = 15;
      bool wallbounce[4];
      sf::CircleShape entity;
      sf::Vector2f position;

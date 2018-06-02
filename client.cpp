@@ -55,21 +55,21 @@ int main()
           balls.push_back(temp);
      }
      balls[0].position = sf::Vector2f(300,300);
-     balls[1].position = sf::Vector2f(854,300);
-     balls[14].position = sf::Vector2f(873,289);
-     balls[2].position = sf::Vector2f(873,311);
-     balls[3].position = sf::Vector2f(892,279);
-     balls[8].position = sf::Vector2f(892,300);
-     balls[12].position = sf::Vector2f(892,321);
-     balls[4].position = sf::Vector2f(911,266);
-     balls[10].position = sf::Vector2f(911,288);
-     balls[7].position = sf::Vector2f(911,312);
-     balls[15].position = sf::Vector2f(911,334);
-     balls[13].position = sf::Vector2f(930,256);
-     balls[9].position = sf::Vector2f(930,278);
-     balls[5].position = sf::Vector2f(930,300);
-     balls[11].position = sf::Vector2f(930,322);
-     balls[6].position = sf::Vector2f(930,344);
+     balls[1].position = sf::Vector2f(830,300);
+     balls[14].position = sf::Vector2f(857,283);
+     balls[2].position = sf::Vector2f(857,317);
+     balls[3].position = sf::Vector2f(884,268);
+     balls[8].position = sf::Vector2f(884,300);
+     balls[12].position = sf::Vector2f(884,332);
+     balls[4].position = sf::Vector2f(913,246);
+     balls[10].position = sf::Vector2f(913,282);
+     balls[7].position = sf::Vector2f(913,318);
+     balls[15].position = sf::Vector2f(913,351);
+     balls[13].position = sf::Vector2f(944,234);
+     balls[9].position = sf::Vector2f(944,267);
+     balls[5].position = sf::Vector2f(944,300);
+     balls[11].position = sf::Vector2f(944,333);
+     balls[6].position = sf::Vector2f(944,366);
      for( int i = 1; i <= 7; i++ )
           balls[i].entity.setFillColor(sf::Color::Blue);
      for( int i = 9; i <= 15; i++ )
