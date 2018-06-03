@@ -1,9 +1,12 @@
 #include <vector>
 #include <iostream>
-#include "include/Ball.h"
+#include <string>
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
-#include <string>
+#include "include/Ball.h"
+#include "include/Cane.h"
+#include "include/Hole.h"
+
 
 sf::Vector2f rv;
 bool playable = true;
@@ -36,13 +39,8 @@ int main()
      listener.accept(socket);
      std::cout << "Connection established" << std::endl;
 
-     std::vector<Ball> balls;
-     std::vector<std::vector<bool>> validcollisions(16,std::vector<bool>(1000, true));
-     for( int i = 0; i < 16; i++ )
-     {
-          Ball temp;
-          balls.push_back(temp);
-     }
+     std::vector<Ball> balls(16);
+     std::vector<std::vector<bool>> validcollisions(16,std::vector<bool>(1000,true));
      balls[0].position = sf::Vector2f(300,300);
      balls[1].position = sf::Vector2f(830,300);
      balls[14].position = sf::Vector2f(857,283);
@@ -60,23 +58,16 @@ int main()
      balls[11].position = sf::Vector2f(944,333);
      balls[6].position = sf::Vector2f(944,366);
      for( int i = 1; i <= 7; i++ )
-          balls[i].entity.setFillColor(sf::Color::Blue);
+          balls[i].entity.setFillColor(sf::Color(41, 128, 185));
      for( int i = 9; i <= 15; i++ )
-          balls[i].entity.setFillColor(sf::Color::Red);
+          balls[i].entity.setFillColor(sf::Color(231, 76, 60));
      balls[8].entity.setFillColor(sf::Color::Black);
 
-     sf::RectangleShape cane;
-     cane.setFillColor(sf::Color(100,100,100));
-     cane.setSize(sf::Vector2f(100,5));
+     Cane cane;
 
-     sf::CircleShape holes[6];
+     std::vector<Hole> holes(6);
      for( int i = 0; i < 6; i++ )
-     {
-          holes[i].setRadius(16);
-          holes[i].setFillColor(sf::Color(40,40,40));
-          holes[i].setOrigin(16,16);
-          holes[i].setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
-     }
+          holes[i].entity.setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
 
      bool drawcane = false;
      bool turn = true;
@@ -89,7 +80,9 @@ int main()
      int bhole[2];
      int points[2] = {0,0};
 
-     sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Server" );
+     sf::ContextSettings settings;
+     settings.antialiasingLevel = 4;
+     sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Server", sf::Style::Default, settings );
      window.setFramerateLimit(60);
      sf::Thread thread(&netthread);
      thread.launch();
@@ -100,30 +93,18 @@ int main()
 
           for( auto h : holes )
           {
-               window.draw(h);
+               window.draw(h.entity);
           }
           for( auto b : balls )
           {
                window.draw(b.entity);
           }
-          if( drawcane )
-               window.draw(cane);
+          if( cane.drawcane )
+               window.draw(cane.entity);
 
           sf::Vector2f mpos = (sf::Vector2f)sf::Mouse::getPosition(window);
           sf::Vector2f cpos = balls[0].position;
-          sf::Vector2f canevec = mpos-cpos;
-          float caneangle = atan2(canevec.y,canevec.x) / M_PI * 180;
-          float canelen = sqrt(sfm::len2(canevec));
-          if( canelen > 200 )
-          {
-               canevec.x = 200 * canevec.x/canelen;
-               canevec.y = 200 * canevec.y/canelen;
-               canelen = 200;
-          }
-          cane.setSize(sf::Vector2f(canelen,6));
-          cane.setOrigin(sf::Vector2f(0,3));
-          cane.setPosition(cpos);
-          cane.setRotation(caneangle);
+          cane.update(mpos,cpos);
 
           for( int i = 0; i < balls.size(); i++ )
           {
@@ -162,7 +143,7 @@ int main()
 
                for( int j = 0; j < 6; j++ )
                {
-                    if( sfm::len2(balls[i].position-holes[j].getPosition()) < 1200 and i > 0 )
+                    if( holes[j].enter(balls[i].position) and i > 0 )
                     {
                          balls[i].hide();
                          if( !pickedcolor )
@@ -234,12 +215,12 @@ int main()
                }
                if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 15 and moveable and turn )
                {
-                    drawcane = true;
+                    cane.drawcane = true;
                }
-               if( event.type == sf::Event::MouseButtonReleased and drawcane )
+               if( event.type == sf::Event::MouseButtonReleased and cane.drawcane )
                {
-                    balls[0].velocity = sf::Vector2f(-5*canevec.x,-5*canevec.y);
-                    drawcane = false;
+                    balls[0].velocity = sf::Vector2f(-5*cane.vec.x,-5*cane.vec.y);
+                    cane.drawcane = false;
                     scored = false;
                     changeable = true;
                }

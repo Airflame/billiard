@@ -5,6 +5,7 @@ Ball::Ball()
 {
      entity.setRadius(radius);
      entity.setOrigin(radius,radius);
+     entity.setFillColor(sf::Color(236, 240, 241));
      for( int i = 0; i < 4; i++ )
           wallbounce[i] = true;
      velocity = sf::Vector2f(0,0);
@@ -30,7 +31,7 @@ void Ball::move( float dt )
      }
      else
           wallbounce[0] = true;
-     if( position.x < 0+radius-1 )
+     if( position.x < 0+radius )
      {
           if( wallbounce[2] )
           {
@@ -54,7 +55,7 @@ void Ball::move( float dt )
      }
      else
           wallbounce[4] = true;
-     if( position.y < 0+radius-1 )
+     if( position.y < 0+radius )
      {
           if( wallbounce[1] )
           {

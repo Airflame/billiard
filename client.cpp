@@ -1,8 +1,11 @@
 #include <vector>
 #include <iostream>
-#include "include/Ball.h"
-#include <SFML/Network.hpp>
 #include <string>
+#include <SFML/Network.hpp>
+#include <SFML/System.hpp>
+#include "include/Ball.h"
+#include "include/Cane.h"
+#include "include/Hole.h"
 
 sf::Vector2f rp[16];
 bool playable = true;
@@ -54,8 +57,8 @@ int main()
      socket.connect(ip,7777);
      std::cout << "Connection established" << std::endl;
 
-     std::vector< Ball > balls;
-     std::vector< std::vector<bool> > validcollisions( 16, std::vector<bool>(1000, true) );
+     std::vector<Ball> balls;
+     std::vector<std::vector<bool>> validcollisions(16,std::vector<bool>(1000,true));
      for( int i = 0; i < 16; i++ )
      {
           Ball temp;
@@ -78,28 +81,27 @@ int main()
      balls[11].position = sf::Vector2f(944,333);
      balls[6].position = sf::Vector2f(944,366);
      for( int i = 1; i <= 7; i++ )
-          balls[i].entity.setFillColor(sf::Color::Blue);
+          balls[i].entity.setFillColor(sf::Color(41, 128, 185));
      for( int i = 9; i <= 15; i++ )
-          balls[i].entity.setFillColor(sf::Color::Red);
+          balls[i].entity.setFillColor(sf::Color(231, 76, 60));
      balls[8].entity.setFillColor(sf::Color::Black);
 
-     sf::RectangleShape cane;
-     cane.setFillColor(sf::Color(100,100,100));
-     cane.setSize(sf::Vector2f(100,5));
+     Cane cane;
 
-     sf::CircleShape holes[6];
+     std::vector<Hole> holes;
      for( int i = 0; i < 6; i++ )
      {
-          holes[i].setRadius(16);
-          holes[i].setFillColor(sf::Color(40,40,40));
-          holes[i].setOrigin(16,16);
-          holes[i].setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
+          Hole temp;
+          holes.push_back(temp);
+          holes[i].entity.setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
      }
 
      bool drawcane = false;
      bool moveable = true;
 
-     sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Client" );
+     sf::ContextSettings settings;
+     settings.antialiasingLevel = 4;
+     sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Client", sf::Style::Default, settings );
      window.setFramerateLimit(60);
      sf::Thread thread(&netthread);
      thread.launch();
@@ -110,30 +112,18 @@ int main()
 
           for( auto h : holes )
           {
-               window.draw(h);
+               window.draw(h.entity);
           }
           for( auto b : balls )
           {
                window.draw(b.entity);
           }
-          if( drawcane )
-               window.draw(cane);
+          if( cane.drawcane )
+               window.draw(cane.entity);
 
           sf::Vector2f mpos = (sf::Vector2f)sf::Mouse::getPosition(window);
           sf::Vector2f cpos = balls[0].position;
-          sf::Vector2f canevec = mpos-cpos;
-          float caneangle = atan2(canevec.y,canevec.x) / M_PI * 180;
-          float canelen = sqrt(sfm::len2(canevec));
-          if( canelen > 200 )
-          {
-               canevec.x = 200 * canevec.x/canelen;
-               canevec.y = 200 * canevec.y/canelen;
-               canelen = 200;
-          }
-          cane.setSize(sf::Vector2f(canelen,6));
-          cane.setOrigin(sf::Vector2f(0,3));
-          cane.setPosition(cpos);
-          cane.setRotation(caneangle);
+          cane.update(mpos,cpos);
 
           moveable = true;
           for( int i = 0; i < balls.size(); i++ )
@@ -158,12 +148,12 @@ int main()
                }
                if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 15 and moveable and turn )
                {
-                    drawcane = true;
+                    cane.drawcane = true;
                }
-               if( event.type == sf::Event::MouseButtonReleased and drawcane )
+               if( event.type == sf::Event::MouseButtonReleased and cane.drawcane )
                {
-                    sf::Vector2f releasevel = sf::Vector2f(-5*canevec.x,-5*canevec.y);
-                    drawcane = false;
+                    sf::Vector2f releasevel = sf::Vector2f(-5*cane.vec.x,-5*cane.vec.y);
+                    cane.drawcane = false;
 
                     sf::Packet packet;
                     float x = releasevel.x;
