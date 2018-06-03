@@ -13,7 +13,7 @@ public:
      void accelerate( float dt, float value );
      void hide();
 
-     int radius = 15;
+     int radius;
      sf::CircleShape entity;
      sf::Vector2f position;
      sf::Vector2f velocity;

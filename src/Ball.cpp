@@ -3,6 +3,7 @@
 
 Ball::Ball()
 {
+     radius = 15;
      entity.setRadius(radius);
      entity.setOrigin(radius,radius);
      entity.setFillColor(sf::Color(236, 240, 241));

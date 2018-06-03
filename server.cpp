@@ -4,8 +4,9 @@
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 #include "include/Ball.h"
-#include "include/Cane.h"
 #include "include/Hole.h"
+#include "include/Cane.h"
+#include "include/Endtext.h"
 
 
 sf::Vector2f rv;
@@ -14,7 +15,7 @@ bool lost;
 bool received = false;
 sf::TcpSocket socket;
 
-void netthread()
+void netloop()
 {
      while(1)
      {
@@ -63,11 +64,12 @@ int main()
           balls[i].entity.setFillColor(sf::Color(231, 76, 60));
      balls[8].entity.setFillColor(sf::Color::Black);
 
-     Cane cane;
-
      std::vector<Hole> holes(6);
      for( int i = 0; i < 6; i++ )
           holes[i].entity.setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
+
+     Cane cane;
+     Endtext endtext;
 
      bool drawcane = false;
      bool turn = true;
@@ -82,25 +84,25 @@ int main()
 
      sf::ContextSettings settings;
      settings.antialiasingLevel = 4;
+
      sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Server", sf::Style::Default, settings );
      window.setFramerateLimit(60);
-     sf::Thread thread(&netthread);
-     thread.launch();
+
+     sf::Thread netthread(&netloop);
+     netthread.launch();
 
      while( window.isOpen() )
      {
           window.clear(sf::Color(10,108,3));
 
           for( auto h : holes )
-          {
                window.draw(h.entity);
-          }
           for( auto b : balls )
-          {
                window.draw(b.entity);
-          }
           if( cane.drawcane )
                window.draw(cane.entity);
+          if( !playable )
+               window.draw(endtext.entity);
 
           sf::Vector2f mpos = (sf::Vector2f)sf::Mouse::getPosition(window);
           sf::Vector2f cpos = balls[0].position;
@@ -108,7 +110,7 @@ int main()
 
           for( int i = 0; i < balls.size(); i++ )
           {
-               if( balls[i].position.x > 0 and balls[i].position.y > 0 )
+               if( balls[i].position.x > -10 and balls[i].position.y > -10 )
                     balls[i].move(dt);
                for( int j = 0; j < balls.size(); j++ )
                {
@@ -176,9 +178,15 @@ int main()
                               if( points[ !turn ] == 7 and j == bhole[ !turn ] )
                               {
                                    lost = !turn;
+                                   endtext.set((std::string)(lost?"YOU LOST":"YOU WON"));
+                                   endtext.center(1200,600);
                               }
                               else
+                              {
                                    lost = turn;
+                                   endtext.set((std::string)(lost?"YOU LOST":"YOU WON"));
+                                   endtext.center(1200,600);
+                              }
                               sf::Packet wpacket;
                               int id = 2;
                               wpacket << id << !lost;
@@ -211,9 +219,9 @@ int main()
                if( event.type == sf::Event::Closed )
                {
                     window.close();
-                    thread.terminate();
+                    netthread.terminate();
                }
-               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 15 and moveable and turn )
+               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= balls[0].radius and moveable and turn )
                {
                     cane.drawcane = true;
                }
@@ -233,9 +241,6 @@ int main()
                scored = false;
                changeable = true;
           }
-
-          if( !playable )
-               std::cout << (lost ? "CLIENT WON" : "SERVER WON") << std::endl;
 
           window.display();
           dt = cl.restart().asSeconds();

@@ -4,8 +4,9 @@
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 #include "include/Ball.h"
-#include "include/Cane.h"
 #include "include/Hole.h"
+#include "include/Cane.h"
+#include "include/Endtext.h"
 
 sf::Vector2f rp[16];
 bool playable = true;
@@ -14,7 +15,7 @@ bool turn = false;
 bool received = false;
 sf::TcpSocket socket;
 
-void netthread()
+void netloop()
 {
      while(1)
      {
@@ -86,8 +87,6 @@ int main()
           balls[i].entity.setFillColor(sf::Color(231, 76, 60));
      balls[8].entity.setFillColor(sf::Color::Black);
 
-     Cane cane;
-
      std::vector<Hole> holes;
      for( int i = 0; i < 6; i++ )
      {
@@ -96,30 +95,33 @@ int main()
           holes[i].entity.setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
      }
 
+     Cane cane;
+     Endtext endtext;
+
      bool drawcane = false;
      bool moveable = true;
 
      sf::ContextSettings settings;
      settings.antialiasingLevel = 4;
+
      sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Client", sf::Style::Default, settings );
      window.setFramerateLimit(60);
-     sf::Thread thread(&netthread);
-     thread.launch();
+
+     sf::Thread netthread(&netloop);
+     netthread.launch();
 
      while( window.isOpen() )
      {
           window.clear(sf::Color(10,108,3));
 
           for( auto h : holes )
-          {
                window.draw(h.entity);
-          }
           for( auto b : balls )
-          {
                window.draw(b.entity);
-          }
           if( cane.drawcane )
                window.draw(cane.entity);
+          if( !playable )
+               window.draw(endtext.entity);
 
           sf::Vector2f mpos = (sf::Vector2f)sf::Mouse::getPosition(window);
           sf::Vector2f cpos = balls[0].position;
@@ -144,7 +146,7 @@ int main()
                if( event.type == sf::Event::Closed )
                {
                     window.close();
-                    thread.terminate();
+                    netthread.terminate();
                }
                if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 15 and moveable and turn )
                {
@@ -164,7 +166,10 @@ int main()
           }
 
           if( !playable )
-               std::cout << (lost ? "SERVER WON" : "CLIENT WON") << std::endl;
+          {
+               endtext.set((std::string)(lost?"YOU LOST":"YOU WON"));
+               endtext.center(1200,600);
+          }
 
           window.display();
           dt = cl.restart().asSeconds();
