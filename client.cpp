@@ -130,7 +130,7 @@ int main()
           moveable = true;
           for( int i = 0; i < balls.size(); i++ )
           {
-               if( balls[i].position.x > 0 and balls[i].position.y > 0 )
+               if( !balls[i].hidden )
                {
                     sf::Vector2f oldpos = balls[i].position;
                     if( oldpos != rp[i] )

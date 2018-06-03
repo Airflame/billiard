@@ -8,10 +8,8 @@
 #include "include/Cane.h"
 #include "include/Endtext.h"
 
-
 sf::Vector2f rv;
 bool playable = true;
-bool lost;
 bool received = false;
 sf::TcpSocket socket;
 
@@ -78,6 +76,7 @@ int main()
      bool changeable = false;
      bool pickedcolor = false;
      bool isblue;
+     bool lost;
 
      int bhole[2];
      int points[2] = {0,0};
@@ -110,7 +109,7 @@ int main()
 
           for( int i = 0; i < balls.size(); i++ )
           {
-               if( balls[i].position.x > -10 and balls[i].position.y > -10 )
+               if( !balls[i].hidden )
                     balls[i].move(dt);
                for( int j = 0; j < balls.size(); j++ )
                {
@@ -199,7 +198,7 @@ int main()
           moveable = true;
           for( auto b : balls )
           {
-               if( sfm::len2(b.velocity) != 0 and b.position.x > 0 and b.position.y > 0 )
+               if( sfm::len2(b.velocity) != 0 and !b.hidden )
                     moveable = false;
           }
 

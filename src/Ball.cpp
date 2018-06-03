@@ -4,6 +4,7 @@
 Ball::Ball()
 {
      radius = 15;
+     hidden = false;
      entity.setRadius(radius);
      entity.setOrigin(radius,radius);
      entity.setFillColor(sf::Color(236, 240, 241));
@@ -111,6 +112,7 @@ void Ball::accelerate( float dt, float value )
 
 void Ball::hide()
 {
+     hidden = true;
      position = sf::Vector2f(-100,100);
      velocity = sf::Vector2f(0,0);
      entity.setPosition(position);
