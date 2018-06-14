@@ -58,13 +58,8 @@ int main()
      socket.connect(ip,7777);
      std::cout << "Connection established" << std::endl;
 
-     std::vector<Ball> balls;
+     std::vector<Ball> balls(16);
      std::vector<std::vector<bool>> validcollisions(16,std::vector<bool>(1000,true));
-     for( int i = 0; i < 16; i++ )
-     {
-          Ball temp;
-          balls.push_back(temp);
-     }
      balls[0].position = sf::Vector2f(300,300);
      balls[1].position = sf::Vector2f(830,300);
      balls[14].position = sf::Vector2f(857,283);
