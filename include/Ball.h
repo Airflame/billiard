@@ -7,7 +7,6 @@ class Ball
 {
 public:
      Ball();
-
      bool collision( sf::Vector2f arg );
      void move( float dt );
      void accelerate( float dt, float value );

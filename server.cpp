@@ -6,7 +6,7 @@
 #include "include/Ball.h"
 #include "include/Hole.h"
 #include "include/Cane.h"
-#include "include/Endtext.h"
+#include "include/Text.h"
 
 sf::Vector2f rv;
 bool playable = true;
@@ -67,7 +67,7 @@ int main()
           holes[i].entity.setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
 
      Cane cane;
-     Endtext endtext;
+     Text endtext;
 
      bool drawcane = false;
      bool turn = true;
@@ -99,7 +99,10 @@ int main()
           for( auto b : balls )
                window.draw(b.entity);
           if( cane.drawcane )
+          {
                window.draw(cane.entity);
+               window.draw(cane.aim);
+          }
           if( !playable )
                window.draw(endtext.entity);
 
@@ -220,7 +223,7 @@ int main()
                     window.close();
                     netthread.terminate();
                }
-               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= balls[0].radius and moveable and turn )
+               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= balls[0].radius and moveable and turn)
                {
                     cane.drawcane = true;
                }

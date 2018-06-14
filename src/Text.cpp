@@ -1,6 +1,6 @@
-#include "../include/Endtext.h"
+#include "../include/Text.h"
 
-Endtext::Endtext()
+Text::Text()
 {
      charsize = 200;
      font.loadFromFile("res/Roboto-Regular.ttf");
@@ -9,13 +9,13 @@ Endtext::Endtext()
      entity.setCharacterSize(100);
 }
 
-void Endtext::set( std::string arg )
+void Text::set( std::string arg )
 {
      entity.setString(arg);
      rect = entity.getLocalBounds();
 }
 
-void Endtext::center( float wx, float wy )
+void Text::center( float wx, float wy )
 {
      entity.setOrigin(rect.left+rect.width/2.0f,rect.top+rect.height/2.0f);
      entity.setPosition(wx/2,wy/2);

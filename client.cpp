@@ -6,7 +6,7 @@
 #include "include/Ball.h"
 #include "include/Hole.h"
 #include "include/Cane.h"
-#include "include/Endtext.h"
+#include "include/Text.h"
 
 sf::Vector2f rp[16];
 bool playable = true;
@@ -96,7 +96,7 @@ int main()
      }
 
      Cane cane;
-     Endtext endtext;
+     Text endtext;
 
      bool drawcane = false;
      bool moveable = true;
@@ -119,7 +119,10 @@ int main()
           for( auto b : balls )
                window.draw(b.entity);
           if( cane.drawcane )
+          {
                window.draw(cane.entity);
+               window.draw(cane.aim);
+          }
           if( !playable )
                window.draw(endtext.entity);
 

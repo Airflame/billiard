@@ -15,7 +15,7 @@ Ball::Ball()
 
 bool Ball::collision( sf::Vector2f arg )
 {
-     return sfm::len2(position-arg) <= 4*radius*radius;
+     return sfm::len2(position-arg) <= 4*radius*radius+1;
 }
 
 void Ball::move( float dt )

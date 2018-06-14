@@ -1,11 +1,10 @@
 #include <string>
 #include "../include/VectorMath.h"
 
-class Endtext
+class Text
 {
 public:
-     Endtext();
-
+     Text();
      void set( std::string arg );
      void center( float wx, float wy );
 

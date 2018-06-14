@@ -6,11 +6,15 @@ class Cane
 {
 public:
      Cane();
-
      void update( sf::Vector2f mpos, sf::Vector2f cpos );
 
      sf::RectangleShape entity;
+     sf::RectangleShape aim;
      sf::Vector2f vec;
-     float len;
+
      bool drawcane;
+
+private:
+     float len;
+     float angle;
 };
