@@ -2,13 +2,12 @@
 
 Cane::Cane()
 {
-     entity.setFillColor(sf::Color(100,100,100));
+     entity.setFillColor(sf::Color(150,150,100));
      entity.setSize(sf::Vector2f(100,5));
-     aim.setFillColor(sf::Color(100,100,100,100));
+     aim.setFillColor(sf::Color(150,150,150,100));
      aim.setSize(sf::Vector2f(1500,2));
      drawcane = false;
 }
-
 
 void Cane::update( sf::Vector2f mpos, sf::Vector2f cpos )
 {

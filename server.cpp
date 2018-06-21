@@ -178,17 +178,11 @@ int main()
                          {
                               playable = false;
                               if( points[ !turn ] == 7 and j == bhole[ !turn ] )
-                              {
                                    lost = !turn;
-                                   endtext.set((std::string)(lost?"YOU LOST":"YOU WON"));
-                                   endtext.center(1200,600);
-                              }
                               else
-                              {
                                    lost = turn;
-                                   endtext.set((std::string)(lost?"YOU LOST":"YOU WON"));
-                                   endtext.center(1200,600);
-                              }
+                              endtext.set((std::string)(lost?"YOU LOST":"YOU WON"));
+                              endtext.center(1200,600);
                               sf::Packet wpacket;
                               int id = 2;
                               wpacket << id << !lost;
