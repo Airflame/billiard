@@ -1,3 +1,5 @@
+#ifndef CANE_H
+#define CANE_H
 #include <cstdlib>
 #include "../include/VectorMath.h"
 
@@ -18,3 +20,5 @@ private:
      float len;
      float angle;
 };
+
+#endif

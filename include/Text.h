@@ -1,3 +1,5 @@
+#ifndef TEXT_H
+#define TEXT_H
 #include <string>
 #include "../include/VectorMath.h"
 
@@ -15,3 +17,5 @@ private:
      sf::Font font;
      sf::FloatRect rect;
 };
+
+#endif

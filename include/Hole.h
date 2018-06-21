@@ -1,3 +1,5 @@
+#ifndef HOLE_H
+#define HOLE_H
 #include "../include/VectorMath.h"
 
 
@@ -13,3 +15,5 @@ private:
      int radius;
      float range;
 };
+
+#endif

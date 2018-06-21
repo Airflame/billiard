@@ -1,3 +1,5 @@
+#ifndef BALL_H
+#define BALL_H
 #include <cstdlib>
 #include <iostream>
 #include "../include/VectorMath.h"
@@ -21,3 +23,5 @@ public:
 private:
      bool wallbounce[4];
 };
+
+#endif
