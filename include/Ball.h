@@ -5,22 +5,21 @@
 #include "../include/VectorMath.h"
 
 
-class Ball
+class Ball : public sf::CircleShape
 {
 public:
      Ball();
-     bool collision( sf::Vector2f arg );
+     void setVelocity( sf::Vector2f arg );
+     sf::Vector2f getVelocity();
+     bool collide( sf::Vector2f arg );
      void move( float dt );
      void accelerate( float dt, float value );
      void hide();
 
-     int radius;
      bool hidden;
-     sf::CircleShape entity;
-     sf::Vector2f position;
-     sf::Vector2f velocity;
 
 private:
+     sf::Vector2f velocity;
      bool wallbounce[4];
 };
 

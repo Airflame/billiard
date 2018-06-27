@@ -1,27 +1,37 @@
 #include "../include/Ball.h"
 
-
 Ball::Ball()
 {
-     radius = 15;
      hidden = false;
-     entity.setRadius(radius);
-     entity.setOrigin(radius,radius);
-     entity.setFillColor(sf::Color(236, 240, 241));
+     setRadius(15);
+     setOrigin(15,15);
+     setFillColor(sf::Color(236, 240, 241));
      for( int i = 0; i < 4; i++ )
           wallbounce[i] = true;
      velocity = sf::Vector2f(0,0);
 }
 
-bool Ball::collision( sf::Vector2f arg )
+void Ball::setVelocity( sf::Vector2f arg )
 {
-     return sfm::len2(position-arg) <= 4*radius*radius+1;
+     velocity = arg;
+}
+
+sf::Vector2f Ball::getVelocity()
+{
+     return velocity;
+}
+
+bool Ball::collide( sf::Vector2f arg )
+{
+
+     return sfm::len2(getPosition()-arg) <= 4*getRadius()*getRadius()+1;
 }
 
 void Ball::move( float dt )
 {
      float loss = 0.8;
-     if( position.x > 1200-radius )
+     sf::Vector2f position = getPosition();
+     if( position.x > 1200-getRadius() )
      {
           if( wallbounce[0] )
           {
@@ -33,7 +43,7 @@ void Ball::move( float dt )
      }
      else
           wallbounce[0] = true;
-     if( position.x < 0+radius )
+     if( position.x < getRadius() )
      {
           if( wallbounce[2] )
           {
@@ -45,7 +55,7 @@ void Ball::move( float dt )
      }
      else
           wallbounce[2] = true;
-     if( position.y > 600-radius )
+     if( position.y > 600-getRadius() )
      {
           if( wallbounce[4] )
           {
@@ -57,7 +67,7 @@ void Ball::move( float dt )
      }
      else
           wallbounce[4] = true;
-     if( position.y < 0+radius )
+     if( position.y < getRadius() )
      {
           if( wallbounce[1] )
           {
@@ -71,7 +81,7 @@ void Ball::move( float dt )
           wallbounce[1] = true;
      position.x += velocity.x*dt;
      position.y += velocity.y*dt;
-     entity.setPosition(position);
+     setPosition(position);
      accelerate(dt,-100);
 }
 
@@ -113,7 +123,6 @@ void Ball::accelerate( float dt, float value )
 void Ball::hide()
 {
      hidden = true;
-     position = sf::Vector2f(-100,100);
+     setPosition(sf::Vector2f(-100,100));
      velocity = sf::Vector2f(0,0);
-     entity.setPosition(position);
 }

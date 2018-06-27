@@ -40,31 +40,31 @@ int main()
 
      std::vector<Ball> balls(16);
      std::vector<std::vector<bool>> validcollisions(16,std::vector<bool>(1000,true));
-     balls[0].position = sf::Vector2f(300,300);
-     balls[1].position = sf::Vector2f(830,300);
-     balls[14].position = sf::Vector2f(857,283);
-     balls[2].position = sf::Vector2f(857,317);
-     balls[3].position = sf::Vector2f(884,268);
-     balls[8].position = sf::Vector2f(884,300);
-     balls[12].position = sf::Vector2f(884,332);
-     balls[4].position = sf::Vector2f(913,246);
-     balls[10].position = sf::Vector2f(913,282);
-     balls[7].position = sf::Vector2f(913,318);
-     balls[15].position = sf::Vector2f(913,351);
-     balls[13].position = sf::Vector2f(944,234);
-     balls[9].position = sf::Vector2f(944,267);
-     balls[5].position = sf::Vector2f(944,300);
-     balls[11].position = sf::Vector2f(944,333);
-     balls[6].position = sf::Vector2f(944,366);
+     balls[0].setPosition( sf::Vector2f(300,300) );
+     balls[1].setPosition( sf::Vector2f(830,300) );
+     balls[14].setPosition( sf::Vector2f(857,283) );
+     balls[2].setPosition( sf::Vector2f(857,317) );
+     balls[3].setPosition( sf::Vector2f(884,268) );
+     balls[8].setPosition( sf::Vector2f(884,300) );
+     balls[12].setPosition( sf::Vector2f(884,332) );
+     balls[4].setPosition( sf::Vector2f(913,246) );
+     balls[10].setPosition( sf::Vector2f(913,282) );
+     balls[7].setPosition( sf::Vector2f(913,318) );
+     balls[15].setPosition( sf::Vector2f(913,351) );
+     balls[13].setPosition( sf::Vector2f(944,234) );
+     balls[9].setPosition( sf::Vector2f(944,267) );
+     balls[5].setPosition( sf::Vector2f(944,300) );
+     balls[11].setPosition( sf::Vector2f(944,333) );
+     balls[6].setPosition( sf::Vector2f(944,366) );
      for( int i = 1; i <= 7; i++ )
-          balls[i].entity.setFillColor(sf::Color(41, 128, 185));
+          balls[i].setFillColor(sf::Color(41, 128, 185));
      for( int i = 9; i <= 15; i++ )
-          balls[i].entity.setFillColor(sf::Color(231, 76, 60));
-     balls[8].entity.setFillColor(sf::Color::Black);
+          balls[i].setFillColor(sf::Color(231, 76, 60));
+     balls[8].setFillColor(sf::Color::Black);
 
      std::vector<Hole> holes(6);
      for( int i = 0; i < 6; i++ )
-          holes[i].entity.setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
+          holes[i].setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
 
      Cane cane;
      Text endtext;
@@ -95,19 +95,19 @@ int main()
           window.clear(sf::Color(10,108,3));
 
           for( auto h : holes )
-               window.draw(h.entity);
+               window.draw(h);
           for( auto b : balls )
-               window.draw(b.entity);
+               window.draw(b);
           if( cane.drawcane )
           {
-               window.draw(cane.entity);
+               window.draw(cane.arm);
                window.draw(cane.aim);
           }
           if( !playable )
-               window.draw(endtext.entity);
+               window.draw(endtext);
 
           sf::Vector2f mpos = (sf::Vector2f)sf::Mouse::getPosition(window);
-          sf::Vector2f cpos = balls[0].position;
+          sf::Vector2f cpos = balls[0].getPosition();
           cane.update(mpos,cpos);
 
           for( int i = 0; i < balls.size(); i++ )
@@ -118,16 +118,16 @@ int main()
                {
                     if( j == i )
                          continue;
-                    if( balls[j].collision(balls[i].position) )
+                    if( balls[j].collide(balls[i].getPosition()) )
                     {
                          if( validcollisions[i][j] )
                          {
-                              sf::Vector2f v01 = balls[i].velocity;
-                              sf::Vector2f v02 = balls[j].velocity;
-                              sf::Vector2f x01 = balls[i].position;
-                              sf::Vector2f x02 = balls[j].position;
-                              balls[i].velocity = v01 - (sfm::dot(v01-v02,x01-x02)) / (sfm::len2(x01-x02)) * (x01-x02);
-                              balls[j].velocity = v02 - (sfm::dot(v02-v01,x02-x01)) / (sfm::len2(x01-x02)) * (x02-x01);
+                              sf::Vector2f v01 = balls[i].getVelocity();
+                              sf::Vector2f v02 = balls[j].getVelocity();
+                              sf::Vector2f x01 = balls[i].getPosition();
+                              sf::Vector2f x02 = balls[j].getPosition();
+                              balls[i].setVelocity( v01 - (sfm::dot(v01-v02,x01-x02)) / (sfm::len2(x01-x02)) * (x01-x02) );
+                              balls[j].setVelocity( v02 - (sfm::dot(v02-v01,x02-x01)) / (sfm::len2(x01-x02)) * (x02-x01) );
                               validcollisions[i][j] = false;
                               validcollisions[j][i] = false;
                          }
@@ -139,15 +139,15 @@ int main()
                     }
                }
                sf::Packet packet;
-               float x = balls[i].position.x;
-               float y = balls[i].position.y;
+               float x = balls[i].getPosition().x;
+               float y = balls[i].getPosition().y;
                int id = 0;
                packet << id << x << y << i;
                socket.send(packet);
 
                for( int j = 0; j < 6; j++ )
                {
-                    if( holes[j].enter(balls[i].position) and i > 0 )
+                    if( holes[j].enter(balls[i].getPosition()) and i > 0 )
                     {
                          balls[i].hide();
                          if( !pickedcolor )
@@ -195,7 +195,7 @@ int main()
           moveable = true;
           for( auto b : balls )
           {
-               if( sfm::len2(b.velocity) != 0 and !b.hidden )
+               if( sfm::len2(b.getVelocity()) != 0 and !b.hidden )
                     moveable = false;
           }
 
@@ -217,13 +217,13 @@ int main()
                     window.close();
                     netthread.terminate();
                }
-               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= balls[0].radius and moveable and turn)
+               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= balls[0].getRadius() and moveable and turn)
                {
                     cane.drawcane = true;
                }
                if( event.type == sf::Event::MouseButtonReleased and cane.drawcane )
                {
-                    balls[0].velocity = sf::Vector2f(-5*cane.vec.x,-5*cane.vec.y);
+                    balls[0].setVelocity( sf::Vector2f(-5*cane.vec.x,-5*cane.vec.y) );
                     cane.drawcane = false;
                     scored = false;
                     changeable = true;
@@ -232,7 +232,7 @@ int main()
 
           if( received )
           {
-               balls[0].velocity = rv;
+               balls[0].setVelocity(rv);
                received = false;
                scored = false;
                changeable = true;

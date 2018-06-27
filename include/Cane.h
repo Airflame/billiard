@@ -10,7 +10,7 @@ public:
      Cane();
      void update( sf::Vector2f mpos, sf::Vector2f cpos );
 
-     sf::RectangleShape entity;
+     sf::RectangleShape arm;
      sf::RectangleShape aim;
      sf::Vector2f vec;
 

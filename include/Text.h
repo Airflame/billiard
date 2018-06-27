@@ -3,14 +3,12 @@
 #include <string>
 #include "../include/VectorMath.h"
 
-class Text
+class Text : public sf::Text
 {
 public:
      Text();
      void set( std::string arg );
      void center( float wx, float wy );
-
-     sf::Text entity;
 
 private:
      int charsize;

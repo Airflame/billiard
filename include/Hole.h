@@ -3,13 +3,11 @@
 #include "../include/VectorMath.h"
 
 
-class Hole
+class Hole : public sf::CircleShape
 {
 public:
      Hole();
      bool enter( sf::Vector2f arg );
-
-     sf::CircleShape entity;
 
 private:
      int radius;
