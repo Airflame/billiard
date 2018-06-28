@@ -11,7 +11,7 @@ Ball::Ball()
      velocity = sf::Vector2f(0,0);
 }
 
-void Ball::setVelocity( sf::Vector2f arg )
+void Ball::setVelocity(sf::Vector2f arg)
 {
      velocity = arg;
 }
@@ -21,19 +21,24 @@ sf::Vector2f Ball::getVelocity()
      return velocity;
 }
 
-bool Ball::collide( sf::Vector2f arg )
+bool Ball::isHidden()
+{
+     return hidden;
+}
+
+bool Ball::collide(sf::Vector2f arg)
 {
 
      return sfm::len2(getPosition()-arg) <= 4*getRadius()*getRadius()+1;
 }
 
-void Ball::move( float dt )
+void Ball::move(float dt)
 {
      float loss = 0.8;
      sf::Vector2f position = getPosition();
-     if( position.x > 1200-getRadius() )
+     if(position.x > 1200-getRadius())
      {
-          if( wallbounce[0] )
+          if(wallbounce[0])
           {
                velocity.x *= -1;
                velocity.x *= loss;
@@ -43,9 +48,9 @@ void Ball::move( float dt )
      }
      else
           wallbounce[0] = true;
-     if( position.x < getRadius() )
+     if(position.x < getRadius())
      {
-          if( wallbounce[2] )
+          if(wallbounce[2])
           {
                velocity.x *= -1;
                velocity.x *= loss;
@@ -55,9 +60,9 @@ void Ball::move( float dt )
      }
      else
           wallbounce[2] = true;
-     if( position.y > 600-getRadius() )
+     if(position.y > 600-getRadius())
      {
-          if( wallbounce[4] )
+          if(wallbounce[4])
           {
                velocity.y *= -1;
                velocity.x *= loss;
@@ -67,9 +72,9 @@ void Ball::move( float dt )
      }
      else
           wallbounce[4] = true;
-     if( position.y < getRadius() )
+     if(position.y < getRadius())
      {
-          if( wallbounce[1] )
+          if(wallbounce[1])
           {
                velocity.y *= -1;
                velocity.x *= loss;
@@ -85,21 +90,21 @@ void Ball::move( float dt )
      accelerate(dt,-100);
 }
 
-void Ball::accelerate( float dt, float value )
+void Ball::accelerate(float dt, float value)
 {
      float x = 0;
      float y = 0;
-     if( sfm::len2(velocity) != 0 )
+     if(sfm::len2(velocity) != 0)
      {
-          x = fabs( velocity.x/sqrt(velocity.x*velocity.x+velocity.y*velocity.y) );
-          y = fabs( velocity.y/sqrt(velocity.x*velocity.x+velocity.y*velocity.y) );
+          x = fabs(velocity.x/sqrt(velocity.x*velocity.x+velocity.y*velocity.y));
+          y = fabs(velocity.y/sqrt(velocity.x*velocity.x+velocity.y*velocity.y));
      }
 
-     if( fabs(value*x*dt) > fabs(velocity.x) )
+     if(fabs(value*x*dt) > fabs(velocity.x))
           velocity.x = 0;
      else
      {
-          if( velocity.x > 0 )
+          if(velocity.x > 0)
           {
                velocity.x += value*x*dt;
           }
@@ -107,11 +112,11 @@ void Ball::accelerate( float dt, float value )
                velocity.x -= value*x*dt;
      }
 
-     if( fabs(value*y*dt) > fabs(velocity.y) )
+     if(fabs(value*y*dt) > fabs(velocity.y))
           velocity.y = 0;
      else
      {
-          if( velocity.y > 0 )
+          if(velocity.y > 0)
           {
                velocity.y += value*y*dt;
           }

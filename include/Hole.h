@@ -7,7 +7,7 @@ class Hole : public sf::CircleShape
 {
 public:
      Hole();
-     bool enter( sf::Vector2f arg );
+     bool enter(sf::Vector2f arg);
 
 private:
      int radius;

@@ -60,30 +60,30 @@ int main()
 
      std::vector<Ball> balls(16);
      std::vector<std::vector<bool>> validcollisions(16,std::vector<bool>(1000,true));
-     balls[0].setPosition( sf::Vector2f(300,300) );
-     balls[1].setPosition( sf::Vector2f(830,300) );
-     balls[14].setPosition( sf::Vector2f(857,283) );
-     balls[2].setPosition( sf::Vector2f(857,317) );
-     balls[3].setPosition( sf::Vector2f(884,268) );
-     balls[8].setPosition( sf::Vector2f(884,300) );
-     balls[12].setPosition( sf::Vector2f(884,332) );
-     balls[4].setPosition( sf::Vector2f(913,246) );
-     balls[10].setPosition( sf::Vector2f(913,282) );
-     balls[7].setPosition( sf::Vector2f(913,318) );
-     balls[15].setPosition( sf::Vector2f(913,351) );
-     balls[13].setPosition( sf::Vector2f(944,234) );
-     balls[9].setPosition( sf::Vector2f(944,267) );
-     balls[5].setPosition( sf::Vector2f(944,300) );
-     balls[11].setPosition( sf::Vector2f(944,333) );
-     balls[6].setPosition( sf::Vector2f(944,366) );
-     for( int i = 1; i <= 7; i++ )
+     balls[0].setPosition(sf::Vector2f(300,300));
+     balls[1].setPosition(sf::Vector2f(830,300));
+     balls[14].setPosition(sf::Vector2f(857,283));
+     balls[2].setPosition(sf::Vector2f(857,317));
+     balls[3].setPosition(sf::Vector2f(884,268));
+     balls[8].setPosition(sf::Vector2f(884,300));
+     balls[12].setPosition(sf::Vector2f(884,332));
+     balls[4].setPosition(sf::Vector2f(913,246));
+     balls[10].setPosition(sf::Vector2f(913,282));
+     balls[7].setPosition(sf::Vector2f(913,318));
+     balls[15].setPosition(sf::Vector2f(913,351));
+     balls[13].setPosition(sf::Vector2f(944,234));
+     balls[9].setPosition(sf::Vector2f(944,267));
+     balls[5].setPosition(sf::Vector2f(944,300));
+     balls[11].setPosition(sf::Vector2f(944,333));
+     balls[6].setPosition(sf::Vector2f(944,366));
+     for(int i = 1; i <= 7; i++)
           balls[i].setFillColor(sf::Color(41, 128, 185));
-     for( int i = 9; i <= 15; i++ )
+     for(int i = 9; i <= 15; i++)
           balls[i].setFillColor(sf::Color(231, 76, 60));
      balls[8].setFillColor(sf::Color::Black);
 
      std::vector<Hole> holes(6);
-     for( int i = 0; i < 6; i++ )
+     for(int i = 0; i < 6; i++)
           holes[i].setPosition(sf::Vector2f(i%3*595+5,i/3*590+5));
 
      Cane cane;
@@ -95,26 +95,26 @@ int main()
      sf::ContextSettings settings;
      settings.antialiasingLevel = 4;
 
-     sf::RenderWindow window( sf::VideoMode(1200,600), "Billiard - Client", sf::Style::Default, settings );
+     sf::RenderWindow window(sf::VideoMode(1200,600), "Billiard - Client", sf::Style::Default, settings);
      window.setFramerateLimit(60);
 
      sf::Thread netthread(&netloop);
      netthread.launch();
 
-     while( window.isOpen() )
+     while(window.isOpen())
      {
           window.clear(sf::Color(10,108,3));
 
-          for( auto h : holes )
+          for(auto h : holes)
                window.draw(h);
-          for( auto b : balls )
+          for(auto b : balls)
                window.draw(b);
-          if( cane.drawcane )
+          if(cane.drawcane)
           {
                window.draw(cane.arm);
                window.draw(cane.aim);
           }
-          if( !playable )
+          if(!playable)
                window.draw(endtext);
 
           sf::Vector2f mpos = (sf::Vector2f)sf::Mouse::getPosition(window);
@@ -122,30 +122,30 @@ int main()
           cane.update(mpos,cpos);
 
           moveable = true;
-          for( int i = 0; i < balls.size(); i++ )
+          for(int i = 0; i < balls.size(); i++)
           {
-               if( !balls[i].hidden )
+               if(!balls[i].isHidden())
                {
                     sf::Vector2f oldpos = balls[i].getPosition();
-                    if( oldpos != rp[i] )
+                    if(oldpos != rp[i])
                          moveable = false;
                }
                balls[i].setPosition(rp[i]);
           }
 
           sf::Event event;
-          while (window.pollEvent(event))
+          while(window.pollEvent(event))
           {
-               if( event.type == sf::Event::Closed )
+               if(event.type == sf::Event::Closed)
                {
                     window.close();
                     netthread.terminate();
                }
-               if( event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 15 and moveable and turn )
+               if(event.type == sf::Event::MouseButtonPressed and sqrt(sfm::len2(mpos-cpos)) <= 15 and moveable and turn)
                {
                     cane.drawcane = true;
                }
-               if( event.type == sf::Event::MouseButtonReleased and cane.drawcane )
+               if(event.type == sf::Event::MouseButtonReleased and cane.drawcane)
                {
                     sf::Vector2f releasevel = sf::Vector2f(-5*cane.vec.x,-5*cane.vec.y);
                     cane.drawcane = false;
@@ -158,7 +158,7 @@ int main()
                }
           }
 
-          if( !playable )
+          if(!playable)
           {
                endtext.set((std::string)(lost?"YOU LOST":"YOU WON"));
                endtext.center(1200,600);

@@ -7,8 +7,8 @@ class Text : public sf::Text
 {
 public:
      Text();
-     void set( std::string arg );
-     void center( float wx, float wy );
+     void set(std::string arg);
+     void center(float wx, float wy);
 
 private:
      int charsize;

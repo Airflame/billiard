@@ -9,17 +9,17 @@ class Ball : public sf::CircleShape
 {
 public:
      Ball();
-     void setVelocity( sf::Vector2f arg );
+     void setVelocity(sf::Vector2f arg);
      sf::Vector2f getVelocity();
-     bool collide( sf::Vector2f arg );
-     void move( float dt );
-     void accelerate( float dt, float value );
+     bool isHidden();
+     bool collide(sf::Vector2f arg);
+     void move(float dt);
+     void accelerate(float dt, float value);
      void hide();
-
-     bool hidden;
 
 private:
      sf::Vector2f velocity;
+     bool hidden;
      bool wallbounce[4];
 };
 

@@ -9,11 +9,11 @@ Cane::Cane()
      drawcane = false;
 }
 
-void Cane::update( sf::Vector2f mpos, sf::Vector2f cpos )
+void Cane::update(sf::Vector2f mpos, sf::Vector2f cpos)
 {
      vec = mpos-cpos;
      len = sqrt(sfm::len2(vec));
-     if( len > 200 )
+     if(len > 200)
      {
           vec.x = 200 * vec.x/len;
           vec.y = 200 * vec.y/len;
