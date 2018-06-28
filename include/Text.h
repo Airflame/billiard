@@ -3,6 +3,7 @@
 #include <string>
 #include "../include/VectorMath.h"
 
+
 class Text : public sf::Text
 {
 public:

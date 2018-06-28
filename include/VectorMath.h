@@ -9,8 +9,8 @@
 
 namespace sfm
 {
-     float dot( sf::Vector2f, sf::Vector2f );
-     float len2( sf::Vector2f );
+     float dot(sf::Vector2f v1, sf::Vector2f v2);
+     float len2(sf::Vector2f v);
 }
 
 #endif

@@ -13,7 +13,6 @@ public:
      sf::RectangleShape arm;
      sf::RectangleShape aim;
      sf::Vector2f vec;
-
      bool drawcane;
 
 private:
