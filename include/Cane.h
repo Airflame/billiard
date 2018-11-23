@@ -7,17 +7,17 @@
 class Cane
 {
 public:
-     Cane();
-     void update(sf::Vector2f mpos, sf::Vector2f cpos);
+    Cane();
+    void update(sf::Vector2f mpos, sf::Vector2f cpos);
 
-     sf::RectangleShape arm;
-     sf::RectangleShape aim;
-     sf::Vector2f vec;
-     bool drawcane;
+    sf::RectangleShape arm;
+    sf::RectangleShape aim;
+    sf::Vector2f vec;
+    bool drawcane;
 
 private:
-     float len;
-     float angle;
+    float len;
+    float angle;
 };
 
 #endif

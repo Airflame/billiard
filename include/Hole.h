@@ -6,12 +6,12 @@
 class Hole : public sf::CircleShape
 {
 public:
-     Hole();
-     bool enter(sf::Vector2f arg);
+    Hole();
+    bool enter(sf::Vector2f arg);
 
 private:
-     int radius;
-     float range;
+    int radius;
+    float range;
 };
 
 #endif
