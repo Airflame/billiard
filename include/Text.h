@@ -12,7 +12,7 @@ public:
     void center(float wx, float wy);
 
 private:
-    int charsize;
+    int charSize;
     sf::Font font;
     sf::FloatRect rect;
 };

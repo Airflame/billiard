@@ -20,7 +20,7 @@ public:
 private:
     sf::Vector2f velocity;
     bool hidden;
-    bool wallbounce[4];
+    bool bounce[4];
 };
 
 #endif

@@ -6,12 +6,12 @@ Cane::Cane()
     arm.setSize(sf::Vector2f(100,5));
     aim.setFillColor(sf::Color(150,150,150,100));
     aim.setSize(sf::Vector2f(1500,2));
-    drawcane = false;
+    drawCane = false;
 }
 
-void Cane::update(sf::Vector2f mpos, sf::Vector2f cpos)
+void Cane::update(sf::Vector2f mousePosition, sf::Vector2f ballPosition)
 {
-    vec = mpos-cpos;
+    vec = mousePosition - ballPosition;
     len = sqrt(sfm::len2(vec));
     if(len > 200)
     {
@@ -22,9 +22,9 @@ void Cane::update(sf::Vector2f mpos, sf::Vector2f cpos)
     angle = atan2(vec.y,vec.x)/M_PI*180;
     arm.setSize(sf::Vector2f(len,6));
     arm.setOrigin(sf::Vector2f(0,3));
-    arm.setPosition(cpos);
+    arm.setPosition(ballPosition);
     arm.setRotation(angle);
     aim.setOrigin(sf::Vector2f(0,1));
-    aim.setPosition(cpos);
+    aim.setPosition(ballPosition);
     aim.setRotation(180+angle);
 }

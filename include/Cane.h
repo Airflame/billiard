@@ -8,12 +8,12 @@ class Cane
 {
 public:
     Cane();
-    void update(sf::Vector2f mpos, sf::Vector2f cpos);
+    void update(sf::Vector2f mousePosition, sf::Vector2f ballPosition);
 
     sf::RectangleShape arm;
     sf::RectangleShape aim;
     sf::Vector2f vec;
-    bool drawcane;
+    bool drawCane;
 
 private:
     float len;

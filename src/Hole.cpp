@@ -9,7 +9,7 @@ Hole::Hole()
     setOrigin(radius,radius);
 }
 
-bool Hole::enter(sf::Vector2f arg)
+bool Hole::entered(sf::Vector2f arg)
 {
     return sfm::len2(arg-getPosition()) < range;
 }
