@@ -1,20 +1,8 @@
-#include <vector>
-#include <iostream>
-#include <string>
-#include <SFML/Network.hpp>
-#include "include/Ball.h"
-#include "include/Hole.h"
-#include "include/Cane.h"
-#include "include/Text.h"
+#include "../include/GameClient.h"
 
-sf::Vector2f receivedPositions[16];
-bool playable = true;
-bool lost;
-bool turn = false;
-bool received = false;
-sf::TcpSocket socket;
+GameClient::GameClient() = default;
 
-void netLoop() {
+void GameClient::netLoop() {
     while (playable) {
         int id;
         sf::Packet packet;
@@ -41,17 +29,19 @@ void netLoop() {
     }
 }
 
-int main() {
-    srand(time(NULL));
-    sf::Clock cl;
-    float dt = 0;
-
+void GameClient::connect() {
     std::cout << "Enter IP address:" << std::endl;
     std::string strIp;
     std::cin >> strIp;
     sf::IpAddress ip(strIp);
     socket.connect(ip, 7777);
     std::cout << "Connection established" << std::endl;
+}
+
+void GameClient::run() {
+    srand(time(nullptr));
+
+    connect();
 
     std::vector<Ball> balls(16);
     std::vector<std::vector<bool>> validCollisions(16, std::vector<bool>(1000, true));
@@ -84,7 +74,7 @@ int main() {
     Cane cane;
     Text endText;
 
-    bool movable = true;
+    bool movable;
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
@@ -92,15 +82,15 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(1200, 600), "Billiard - Client", sf::Style::Default, settings);
     window.setFramerateLimit(60);
 
-    sf::Thread netThread(&netLoop);
+    sf::Thread netThread(&GameClient::netLoop, this);
     netThread.launch();
 
     while (window.isOpen()) {
         window.clear(sf::Color(10, 108, 3));
 
-        for (auto h : holes)
+        for (const auto& h : holes)
             window.draw(h);
-        for (auto b : balls)
+        for (const auto& b : balls)
             window.draw(b);
         if (cane.drawCane) {
             window.draw(cane.arm);
@@ -151,8 +141,5 @@ int main() {
         }
 
         window.display();
-        dt = cl.restart().asSeconds();
     }
-
-    return 0;
 }

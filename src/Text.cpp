@@ -3,7 +3,7 @@
 Text::Text()
 {
     charSize = 200;
-    font.loadFromFile("res/Roboto-Regular.ttf");
+    font.loadFromFile("../res/Roboto-Regular.ttf");
     setFont(font);
     setFillColor(sf::Color::White);
     setCharacterSize(100);

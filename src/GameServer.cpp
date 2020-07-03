@@ -1,19 +1,9 @@
-#include <vector>
-#include <iostream>
-#include <string>
-#include <SFML/Network.hpp>
-#include "include/Ball.h"
-#include "include/Hole.h"
-#include "include/Cane.h"
-#include "include/Text.h"
+#include "../include/GameServer.h"
 
-sf::Vector2f receivedVelocity;
-bool playable = true;
-bool received = false;
-sf::TcpSocket socket;
+GameServer::GameServer() = default;
 
-void netLoop() {
-    while (1) {
+void GameServer::netLoop() {
+    while (playable) {
         float x, y;
         sf::Packet packet;
         socket.receive(packet);
@@ -23,16 +13,20 @@ void netLoop() {
     }
 }
 
-int main() {
-    srand(time(NULL));
-    sf::Clock cl;
-    float dt = 0;
-
+void GameServer::connect() {
     std::cout << "Waiting for connection" << std::endl;
     sf::TcpListener listener;
     listener.listen(7777);
     listener.accept(socket);
     std::cout << "Connection established" << std::endl;
+}
+
+void GameServer::run() {
+    srand(time(nullptr));
+    sf::Clock cl;
+    float dt = 0;
+
+    connect();
 
     std::vector<Ball> balls(16);
     std::vector<std::vector<bool>> validCollisions(16, std::vector<bool>(1000, true));
@@ -80,18 +74,18 @@ int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
 
-    sf::RenderWindow window(sf::VideoMode(1200, 600), "Billiard - GameServer", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode(1200, 600), "Billiard - Server", sf::Style::Default, settings);
     window.setFramerateLimit(60);
 
-    sf::Thread netThread(&netLoop);
+    sf::Thread netThread(&GameServer::netLoop, this);
     netThread.launch();
 
     while (window.isOpen()) {
         window.clear(sf::Color(10, 108, 3));
 
-        for (auto h : holes)
+        for (const auto& h : holes)
             window.draw(h);
-        for (auto b : balls)
+        for (const auto& b : balls)
             window.draw(b);
         if (cane.drawCane) {
             window.draw(cane.arm);
@@ -165,7 +159,7 @@ int main() {
                         endText.set((std::string) (lost ? "YOU LOST" : "YOU WON"));
                         endText.center(1200, 600);
                         sf::Packet winPacket;
-                        int id = 2;
+                        id = 2;
                         winPacket << id << !lost;
                         socket.send(winPacket);
                     }
@@ -216,6 +210,4 @@ int main() {
         window.display();
         dt = cl.restart().asSeconds();
     }
-
-    return 0;
 }

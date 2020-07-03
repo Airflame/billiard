@@ -5,6 +5,8 @@ Ball::Ball() {
     setRadius(15);
     setOrigin(15, 15);
     setFillColor(sf::Color(236, 240, 241));
+    setOutlineThickness(-1);
+    setOutlineColor(sf::Color::White);
     for (int i = 0; i < 4; i++)
         bounce[i] = true;
     velocity = sf::Vector2f(0, 0);
